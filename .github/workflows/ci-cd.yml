@@ -15,13 +15,19 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v2
 
+      # Step to install Docker Compose
+      - name: Install Docker Compose
+        run: |
+          sudo curl -L "https://github.com/docker/compose/releases/latest/download/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
+          sudo chmod +x /usr/local/bin/docker-compose
+          docker-compose --version
+
       - name: Build and Test with Docker Compose
         run: |
           docker-compose -f docker-compose.yml build
           docker-compose -f docker-compose.yml up -d
           docker-compose exec backend npm test  # Run backend tests
           docker-compose exec frontend npm test  # Run frontend tests
-        # Stop the containers after testing
         env:
           REACT_APP_BACKEND_URL: http://localhost:5000
 
@@ -34,10 +40,11 @@ jobs:
         uses: appleboy/ssh-action@v0.1.4
         with:
           host: 172.105.77.29
-          username: root
+          username: root  # or your non-root deploy user
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           script: |
             cd /home/more-project
             git pull origin main
             docker-compose down
             docker-compose up -d --build
+
