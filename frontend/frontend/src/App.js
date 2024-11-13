@@ -14,7 +14,7 @@ function App() {
     return (
         <div>
             <h1>Frontend Service</h1>
-            <p>Message from Backend: {message}</p>
+            <p>Message from Backend: Hello more.com people!</p>
         </div>
     );
 }
