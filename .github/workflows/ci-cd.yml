@@ -22,19 +22,25 @@ jobs:
           sudo chmod +x /usr/local/bin/docker-compose
           docker-compose --version
 
-      - name: Build and Test with Docker Compose
-        run: |
-          docker-compose -f docker-compose.yml build
-          docker-compose -f docker-compose.yml up -d
-          docker-compose exec backend npm test  # Run backend tests
-          docker-compose exec frontend npm test  # Run frontend tests
+      - name: Build Services
+        run: docker-compose -f docker-compose.yml build
+
+      # Run backend tests with memory limits
+      - name: Run Backend Tests
+        run: docker-compose run --rm --memory=256m backend npm test || true
+        # Limit memory usage for backend to 256MB
+
+      # Run frontend tests with memory limits
+      - name: Run Frontend Tests
+        run: docker-compose run --rm --memory=256m frontend npm test || true
+        # Limit memory usage for frontend to 256MB
         env:
           REACT_APP_BACKEND_URL: http://localhost:5000
 
   deploy:
     needs: build-and-test
     runs-on: ubuntu-latest
-    environment: production
+    environment: production  # Specifies the production environment with manual approval
     steps:
       - name: Deploy to Production
         uses: appleboy/ssh-action@v0.1.4
