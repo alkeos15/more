@@ -30,7 +30,7 @@ jobs:
       # Step 4: Build Docker image for the frontend
       - name: Build Frontend Image
         run: |
-          docker build -t frontend ./frontend
+          docker build -t frontend ./frontend/frontend
 
       # Step 5: Run backend tests
       - name: Run Backend Tests
