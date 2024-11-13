@@ -1,6 +1,5 @@
 name: CI/CD Pipeline
 
-# Trigger the workflow on pushes to main and pull requests
 on:
   push:
     branches:
@@ -12,29 +11,33 @@ on:
 jobs:
   build-and-test:
     runs-on: ubuntu-latest
-
     steps:
-      # Step 1: Check out the code
       - name: Checkout code
         uses: actions/checkout@v2
 
-      # Step 2: Build Docker image for the backend
-      - name: Build Backend Image
+      - name: Build and Test with Docker Compose
         run: |
-          docker build -t backend ./backend
+          docker-compose -f docker-compose.yml build
+          docker-compose -f docker-compose.yml up -d
+          docker-compose exec backend npm test  # Run backend tests
+          docker-compose exec frontend npm test  # Run frontend tests
+        # Stop the containers after testing
+        env:
+          REACT_APP_BACKEND_URL: http://localhost:5000
 
-      # Step 3: Build Docker image for the frontend
-      - name: Build Frontend Image
-        run: |
-          docker build -t frontend ./frontend
-
-      # Step 4: Run backend tests
-      - name: Run Backend Tests
-        run: |
-          docker run backend npm test
-
-      # Step 5: Run frontend tests
-      - name: Run Frontend Tests
-        run: |
-          docker run frontend npm test
-
+  deploy:
+    needs: build-and-test
+    runs-on: ubuntu-latest
+    environment: production
+    steps:
+      - name: Deploy to Production
+        uses: appleboy/ssh-action@v0.1.4
+        with:
+          host: 172.105.77.29
+          username: root
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          script: |
+            cd /home/more-project
+            git pull origin main
+            docker-compose down
+            docker-compose up -d --build
