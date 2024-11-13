@@ -11,6 +11,7 @@ services:
         limits:
           memory: 256M
           cpus: '0.5'
+    restart: always
 
   frontend:
     build: ./frontend
@@ -23,3 +24,4 @@ services:
         limits:
           memory: 256M
           cpus: '0.5'
+    restart: always
