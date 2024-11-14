@@ -45,7 +45,7 @@ jobs:
       - name: Deploy to Production
         uses: appleboy/ssh-action@v0.1.4
         with:
-          host: ${{ secrets.HOST }}
+          host: 172.105.77.29
           username: deployuser
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           port: 22
