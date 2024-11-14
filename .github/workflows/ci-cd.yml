@@ -45,8 +45,8 @@ jobs:
       - name: Deploy to Production
         uses: appleboy/ssh-action@v0.1.4
         with:
-          host: 172.105.77.29
-          username: root  # or your non-root deploy user
+          host: ${{ secrets.HOST }}
+          username: ${{ secrets.USERNAME }}
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           script: |
             cd /home/more-project
