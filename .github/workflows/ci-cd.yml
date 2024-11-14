@@ -47,7 +47,7 @@ jobs:
         with:
           host: 172.105.77.29
           username: deployuser
-          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}   #created new token
           port: 22
           script: |
             cd /home/more-project
